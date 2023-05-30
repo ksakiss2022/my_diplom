@@ -1,6 +1,7 @@
 package ru.skypro.homework.model;
 
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -12,6 +13,7 @@ import java.util.Objects;
  к полям. Методы `equals()`, `hashCode()` и `toString()` вызываются при сравнении, хешировании и преобразовании
  объекта в строку.
  */
+@Component
 @Entity//Аннотация `@Entity` используется в JPA-сущностях для обозначения, что класс представляет собой таблицу в базе данных.
 @Data//Аннотация `@Data` автоматически создает все необходимые методы геттеров, сеттеров, методы сравнения и хеширования, а также метод toString().
 @Table(name = "ads")// - аннотация определяет имя таблицы в базе данных.

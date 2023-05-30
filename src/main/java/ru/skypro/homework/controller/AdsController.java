@@ -7,15 +7,20 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.apache.catalina.Store;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.model.Ads;
+import ru.skypro.homework.service.AdsService;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -23,11 +28,14 @@ import javax.validation.constraints.Positive;
 /**
  * Класс AdsController представляет собой Rest-контроллер, который содержит операции для работы с объявлениями.
  */
-@RestController// означает, что данный класс является контроллером, который обрабатывает REST-запросы и возвращает JSON-ответы
+@RestController
+// означает, что данный класс является контроллером, который обрабатывает REST-запросы и возвращает JSON-ответы
 @RequestMapping("/ads")//указывает, что все операции контроллера будут обрабатываться по пути /ads.
 @CrossOrigin(value = "http://localhost:3000")//включает поддержку CORS на уровне контроллера, что позволяет принимать
 // запросы из указанного источника (по адресу http://localhost:3000).
 public class AdsController {
+    @Autowired
+    private AdsService adsService;
 
     //операция "getAllAds" предназначена для получения списка всех объявлений. Для этого используется GET-запрос на путь
     // /ads. В ответ сервер возвращает массив объектов AdsDto в формате JSON.
@@ -64,13 +72,34 @@ public class AdsController {
                             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
             }, tags = "Объявления")
-    @PostMapping
-    public ResponseEntity<AdsDto> addAd(@RequestBody Ads ads) {
-        return new ResponseEntity<>(HttpStatus.CREATED);
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<byte[]> addAd(@RequestPart("ad") AdsDto ads, @RequestPart("image") MultipartFile image, Store storageService) {
+        if (image.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+
+        }
+        // TODO: сохранить изображение в хранилище и получить URL-адрес для изображения
+        Ads savedAdsDto = adsService.save(ads);
+
+        // TODO: создать объект AdsDto и обновить его, чтобы включить информацию об изображении
+        AdsDto adsDto = new AdsDto();
+        adsDto.setTitle(ads.getTitle());
+        adsDto.setPrice(ads.getPrice());
+        adsDto.setImage(adsDto.getImage());
+
+        // TODO: сохранить объект AdsDto в базе данных
+        adsService.save(adsDto);
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .replacePath("/api/ads/{id}")
+                .buildAndExpand(adsDto.getId())
+                .toUri();
+
+        return ResponseEntity.created(uri).build();
     }
 
-
-//операция "getAds" предназначена для получения информации об определенном объявлении. Для этого нужно передать ID
+    //операция "getAds" предназначена для получения информации об определенном объявлении. Для этого нужно передать ID
 // объявления в параметре URL. В ответ сервер возвращает объект AdsDto запрашиваемого объявления в формате JSON.
     @Operation(
             operationId = "getAds",
