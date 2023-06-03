@@ -7,20 +7,15 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.apache.catalina.Store;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.skypro.homework.dto.AdsDto;
-import ru.skypro.homework.model.Ads;
 import ru.skypro.homework.service.AdsService;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -34,8 +29,11 @@ import javax.validation.constraints.Positive;
 @CrossOrigin(value = "http://localhost:3000")//включает поддержку CORS на уровне контроллера, что позволяет принимать
 // запросы из указанного источника (по адресу http://localhost:3000).
 public class AdsController {
-    @Autowired
-    private AdsService adsService;
+    private final AdsService adsService;
+
+    public AdsController(AdsService adsService) {
+        this.adsService = adsService;
+    }
 
     //операция "getAllAds" предназначена для получения списка всех объявлений. Для этого используется GET-запрос на путь
     // /ads. В ответ сервер возвращает массив объектов AdsDto в формате JSON.
@@ -52,7 +50,7 @@ public class AdsController {
                             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
             }, tags = "Объявления")
-    @GetMapping("/ads")
+    @GetMapping
     public ResponseEntity<List<AdsDto>> getAllAds() {
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -74,29 +72,8 @@ public class AdsController {
             }, tags = "Объявления")
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<byte[]> addAd(@RequestPart("ad") AdsDto ads, @RequestPart("image") MultipartFile image, Store storageService) {
-        if (image.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-
-        }
-        // TODO: сохранить изображение в хранилище и получить URL-адрес для изображения
-        Ads savedAdsDto = adsService.save(ads);
-
-        // TODO: создать объект AdsDto и обновить его, чтобы включить информацию об изображении
-        AdsDto adsDto = new AdsDto();
-        adsDto.setTitle(ads.getTitle());
-        adsDto.setPrice(ads.getPrice());
-        adsDto.setImage(adsDto.getImage());
-
-        // TODO: сохранить объект AdsDto в базе данных
-        adsService.save(adsDto);
-
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .replacePath("/api/ads/{id}")
-                .buildAndExpand(adsDto.getId())
-                .toUri();
-
-        return ResponseEntity.created(uri).build();
+    public ResponseEntity<AdsDto> addAd(@RequestPart("properties") AdsDto ads, @RequestParam MultipartFile image) throws IOException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(adsService.addAd(ads, image));
     }
 
     //операция "getAds" предназначена для получения информации об определенном объявлении. Для этого нужно передать ID
@@ -114,7 +91,7 @@ public class AdsController {
                             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
             }, tags = "Объявления")
-    @GetMapping("/ads/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<AdsDto> getAds(@Parameter(description = "Id объявления") @PathVariable Long id) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -152,8 +129,8 @@ public class AdsController {
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             }, tags = "Объявления")
     @PatchMapping("/{id}")
-    public ResponseEntity<AdsDto> updateAds(@RequestBody Ads ads, @PathVariable Integer id) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AdsDto> updateAds(@RequestBody AdsDto ads, @PathVariable Integer id) {
+        return ResponseEntity.status(HttpStatus.OK).body(adsService.updateAds(ads, id));
     }
 
     @Operation(
@@ -169,7 +146,7 @@ public class AdsController {
                             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
             }, tags = "Объявления")
-    @GetMapping("/ads/me")
+    @GetMapping("/me")
     public ResponseEntity<AdsDto> getAdsMe() {
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -189,7 +166,7 @@ public class AdsController {
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             }, tags = "Объявления")
 
-    @PatchMapping
+    @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> updateImage(
             @PathVariable @Positive(message = "ID объявления должен быть положительным числом") Integer id,
             @NotNull(message = "Файл изображения не может быть пустым") @RequestParam("image") MultipartFile image)

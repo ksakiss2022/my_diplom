@@ -20,9 +20,9 @@ import ru.skypro.homework.dto.UserDto;
 
 /**
  * Класс UserController является REST-контроллером, который обрабатывает запросы для работы с пользователями.
- *
- Класс содержит методы для обновления пароля, получения информации об авторизованном пользователе,
- обновления информации и аватара пользователя.
+ * <p>
+ * Класс содержит методы для обновления пароля, получения информации об авторизованном пользователе,
+ * обновления информации и аватара пользователя.
  */
 @RestController//указывает, что это класс REST-контроллера
 @RequestMapping("/users")// устанавливает базовый URL-адрес для всех методов, которые обрабатываются этим контроллером.
@@ -37,7 +37,7 @@ public class UserController {
     }
 
 
-//Аннотация @Operation содержит описание каждого метода, включая название,
+    //Аннотация @Operation содержит описание каждого метода, включая название,
 // описание, ответы и теги для документирования API.
     @Operation(
             //Метод setPassword(@RequestBody NewPasswordDto newPassword,
@@ -56,7 +56,7 @@ public class UserController {
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             }, tags = "Пользователи")
 
-    @PostMapping("/users/set_password")
+    @PostMapping("/set_password")
     public ResponseEntity<String> setPassword(@RequestBody NewPasswordDto newPassword, Authentication authentication) {
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -79,7 +79,7 @@ public class UserController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
             }, tags = "Пользователи")
 
-    @GetMapping("/users/me")
+    @GetMapping("/me")
     public ResponseEntity<UserDto> getUser(Authentication authentication) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -101,9 +101,15 @@ public class UserController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
             }
     )
-    @PatchMapping("/users")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto user, Authentication authentication) {
-        return new ResponseEntity<>(HttpStatus.OK);
+//    @PatchMapping("/me")
+//    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto user, Authentication authentication) {
+//        System.out.println("Hello");
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
+    @PatchMapping("/me")
+    public UserDto updateUser(@RequestBody UserDto user) {
+        System.out.println("Hello");
+        return new UserDto();
     }
 
     @Operation(
@@ -123,7 +129,7 @@ public class UserController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
             }
     )
-    @PatchMapping(value = "/users/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateUserImage(@RequestParam("image") MultipartFile image, Authentication authentication) {
         return ResponseEntity.status(200).build();
     }

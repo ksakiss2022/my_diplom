@@ -1,21 +1,27 @@
 package ru.skypro.homework.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.util.Collection;
 import java.util.Objects;
+
 /**
- Аннотация @Entity говорит JPA/Hibernate, что класс является сущностью базы данных. Она позволяет привязать класс к
- таблице в базе данных. В данном случае класс User является сущностью, которая будет храниться в таблице "users".
- Атрибуты класса описывают различные параметры пользователя, такие как его имя, фамилию, адрес электронной почты,
- телефонную информацию и т.д.
+ * Аннотация @Entity говорит JPA/Hibernate, что класс является сущностью базы данных. Она позволяет привязать класс к
+ * таблице в базе данных. В данном случае класс User является сущностью, которая будет храниться в таблице "users".
+ * Атрибуты класса описывают различные параметры пользователя, такие как его имя, фамилию, адрес электронной почты,
+ * телефонную информацию и т.д.
  */
 @Entity
 @Data//добавляет в класс методы генерации геттеров, сеттеров, метода hashCode(), метода equals() и метода toString()
 // для всех полей класса автоматически.
 @Table(name = "users")// указывает, что таблица, с которой ассоциирован класс User, имеет имя "users".
 public class User {
-
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private Collection<Ads> ads;
 
     @Id// указывает, что поле id является первичным ключом, уникальным для каждой записи таблицы.
     @GeneratedValue(strategy = GenerationType.IDENTITY)//указывает, что значения id генерируются автоматически.

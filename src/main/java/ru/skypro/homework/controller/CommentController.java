@@ -53,13 +53,13 @@ public class CommentController {
                             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
             }, tags = "Комментарии")
-    @GetMapping("/ads/{id}/comments")
+    @GetMapping("/{id}/comments")
     public ResponseEntity<CommentDto> getComments(@Parameter(description = "Id комментария") @PathVariable Integer id) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
-// операция "addComment" предназначена для добавления нового комментария к определенному объявлению. Для этого нужно
+    // операция "addComment" предназначена для добавления нового комментария к определенному объявлению. Для этого нужно
 // передать объект Comment в теле запроса. В ответ сервер вернет объект CommentDto созданного комментария.
     @Operation(
             operationId = "addComment",
@@ -74,7 +74,7 @@ public class CommentController {
                             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
             }, tags = "Комментарии")
-    @PostMapping("/comment")
+    @PostMapping("/{id}/comments")
     public ResponseEntity<CommentDto> addComment(@RequestBody Comment comment) {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -91,15 +91,16 @@ public class CommentController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
                     @ApiResponse(responseCode = "403", description = "Forbidden"),
             }, tags = "Комментарии")
-    @DeleteMapping("//ads/{adId}/comments/{commentId}")
-    public ResponseEntity<Void> deleteComment(@Parameter(description = "Id комментария") @PathVariable Integer id) {
+    @DeleteMapping("/{adId}/comments/{commentId}")
+    public ResponseEntity<Void> deleteComment(@Parameter(description = "Id комментария") @PathVariable Integer id,
+                                              @PathVariable Integer commentId) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 
-   // операция "updateComment" предназначена для обновления определенного комментария. Для этого нужно передать в теле
-   // запроса объект Comment с обновленными полями и ID комментария и ID объявления в параметрах URL. В ответ сервер
-   // вернет объект Comment обновленного комментария.
+    // операция "updateComment" предназначена для обновления определенного комментария. Для этого нужно передать в теле
+    // запроса объект Comment с обновленными полями и ID комментария и ID объявления в параметрах URL. В ответ сервер
+    // вернет объект Comment обновленного комментария.
     @Operation(
             operationId = "adId",
             summary = "Обновить комментарий",
@@ -114,7 +115,7 @@ public class CommentController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             }, tags = "Комментарии")
-    @PatchMapping("/comment")
+    @PatchMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<Comment> updateComment(
             @PathVariable Long adId,
             @PathVariable Long commentId,

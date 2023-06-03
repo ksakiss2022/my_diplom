@@ -1,9 +1,12 @@
 package ru.skypro.homework.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.model.Ads;
 import ru.skypro.homework.repository.AdsRepository;
+
+import java.io.IOException;
 
 @Service
 public class AdsService {
@@ -11,6 +14,14 @@ public class AdsService {
 
     public AdsService(AdsRepository adsRepository) {
         this.adsRepository = adsRepository;
+    }
+
+    public AdsDto updateAds(AdsDto adsDto, Integer id) {
+        return null;
+    }
+
+    public AdsDto addAd(AdsDto adsDto, MultipartFile image) throws IOException {
+        return null;
     }
 
     public Ads save(AdsDto adsDto) {

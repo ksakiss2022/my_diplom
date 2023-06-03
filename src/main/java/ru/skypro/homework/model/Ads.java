@@ -3,9 +3,7 @@ package ru.skypro.homework.model;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.Objects;
 /**
@@ -18,15 +16,18 @@ import java.util.Objects;
 @Data//Аннотация `@Data` автоматически создает все необходимые методы геттеров, сеттеров, методы сравнения и хеширования, а также метод toString().
 @Table(name = "ads")// - аннотация определяет имя таблицы в базе данных.
 public class Ads {
+    @ManyToOne()
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @NotNull
+    @Min(1)//для минимального значения, которое может принимать поле
+    private Integer author;
     @Id
     private Integer id;
     @NotNull// для значения, которое не может быть null,
     @Min(1)// для минимального значения, которое может принимать поле
     private Integer pk;
-
-    @NotNull//для значения, которое не может быть null,
-    @Min(1)//для минимального значения, которое может принимать поле
-    private Integer author;
 
     @NotBlank//для значения, которое не должно быть пустой строкой
     @Size(max = 100)// для проверки размера строки,
