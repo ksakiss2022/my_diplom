@@ -75,7 +75,7 @@ public class CommentController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
             }, tags = "Комментарии")
     @PostMapping("/{id}/comments")
-    public ResponseEntity<CommentDto> addComment(@RequestBody Comment comment) {
+    public ResponseEntity<CommentDto> addComment(@PathVariable Integer id,@RequestBody Comment comment) {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -92,7 +92,7 @@ public class CommentController {
                     @ApiResponse(responseCode = "403", description = "Forbidden"),
             }, tags = "Комментарии")
     @DeleteMapping("/{adId}/comments/{commentId}")
-    public ResponseEntity<Void> deleteComment(@Parameter(description = "Id комментария") @PathVariable Integer id,
+    public ResponseEntity<Void> deleteComment(@Parameter(description = "Id комментария") @PathVariable Integer adId,
                                               @PathVariable Integer commentId) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -117,8 +117,8 @@ public class CommentController {
             }, tags = "Комментарии")
     @PatchMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<Comment> updateComment(
-            @PathVariable Long adId,
-            @PathVariable Long commentId,
+            @PathVariable Integer adId,
+            @PathVariable Integer commentId,
             @RequestBody Comment updateRequest,
             Authentication authentication
     ) {
