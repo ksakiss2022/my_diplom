@@ -8,13 +8,11 @@ import lombok.Data;
  */
 @Data//// добавляет методы getter и setter для каждого поля класса, а также методы toString, equals и hashCode.
 public class RegisterReq {
-    private Integer id;
     private String username;
     private String password;
     private String firstName;
     private String lastName;
     private String phone;
     private Role role;
-
 
 }

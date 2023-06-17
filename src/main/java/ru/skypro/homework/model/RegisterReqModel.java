@@ -14,7 +14,7 @@ import java.util.Objects;
  Атрибуты класса предназначены для хранения различных данных о пользователях, таких как их имя, фамилия, телефон, роль
  */
 @Entity//предназначен для хранения данных пользователей в базе данных.
-@Data//автоматически создает методы hashCode(), equals(), toString(), геттеры и сеттеры.
+//@Data//автоматически создает методы hashCode(), equals(), toString(), геттеры и сеттеры.
 @Table(name = "registerReqModel")//для создания таблицы в базе данных с именем "registerReqModel"
 public class RegisterReqModel {
     @Id
@@ -45,7 +45,16 @@ public class RegisterReqModel {
     // перечисления Role.
     private Role role;
 
-    public RegisterReqModel(String username, String password, String firstName, String lastName, String phone, @NotNull Role role) {
+    @NotNull
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(@NotNull Role role) {
+        this.role = role;
+    }
+
+     public RegisterReqModel(String username, String password, String firstName, String lastName, String phone, @NotNull Role role) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -57,5 +66,75 @@ public class RegisterReqModel {
     public RegisterReqModel() {
 
     }
+    public Integer getId() {
+        return id;
+    }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RegisterReqModel that = (RegisterReqModel) o;
+        return id.equals(that.id) && username.equals(that.username) && password.equals(that.password) && firstName.equals(that.firstName) && lastName.equals(that.lastName) && phone.equals(that.phone) && role == that.role;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, password, firstName, lastName, phone, role);
+    }
+    @Override
+    public String toString() {
+        return "RegisterReqModel{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phone='" + phone + '\'' +
+                ", role=" + role +
+                '}';
+    }
 }

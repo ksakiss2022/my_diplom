@@ -3,46 +3,30 @@ package ru.skypro.homework.service;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdsDto;
-import ru.skypro.homework.model.Ads;
-import ru.skypro.homework.repository.AdsRepository;
 
 import java.io.IOException;
-
+import java.util.Collection;
+import java.util.List;
 @Service
-public class AdsService {
-    private final AdsRepository adsRepository;
+public interface AdsService {
+    Iterable<AdsDto> getAllAds();
 
-    public AdsService(AdsRepository adsRepository) {
-        this.adsRepository = adsRepository;
-    }
+    void removeAd(Integer id);
 
-    public AdsDto updateAds(AdsDto adsDto, Integer id) {
-        return null;
-    }
+    AdsDto addAd(AdsDto adsDto, MultipartFile image) throws IOException;
 
-    public AdsDto addAd(AdsDto adsDto, MultipartFile image) throws IOException {
-        return null;
-    }
+    AdsDto getAds(Integer id);
 
-    public Ads save(AdsDto adsDto) {
-        Ads ads = new Ads();
-        ads.setTitle(adsDto.getTitle());
-        ads.setPrice(adsDto.getPrice());
-        ads.setImage(adsDto.getImage());
+    String updateAds(AdsDto adsDto, Integer id);
 
-        Ads savedAds = adsRepository.save(ads);
+    List<AdsDto> getAdsByUserId(Integer userId);
 
-        return savedAds;
-    }
+    Collection<AdsDto> getMe(String email);
 
+    List<AdsDto> getAdsByCurrentUser();
 
-    private <S extends AdsDto> S createAdsDto(Ads ad) {
-        S adsDto = (S) new AdsDto();
-        adsDto.setId(ad.getId());
-        adsDto.setTitle(ad.getTitle());
-        adsDto.setPrice(ad.getPrice());
-        adsDto.setImage(ad.getImage());
+    byte[] updateImage(Integer id, MultipartFile image) throws IOException;
 
-        return adsDto;
-    }
+   // List<AdsDto> getAdsByUserId(Integer userId);
+   List<AdsDto> getAdsByUserId(Long userId);
 }

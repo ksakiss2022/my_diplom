@@ -7,6 +7,8 @@ import ru.skypro.homework.model.Comment;
 
 import javax.persistence.metamodel.SingularAttribute;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * В интерфейсе CommentRepository определены методы для поиска комментариев по различным критериям, таким как Id, автор
@@ -15,10 +17,17 @@ import java.io.Serializable;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
-    Comment findCommentById (SingularAttribute<AbstractPersistable, Serializable> Id);
-    Comment findCommentByAuthor (int author);
+    Comment findCommentById(SingularAttribute<AbstractPersistable, Serializable> Id);
 
-    Comment findCommentByAuthorImageContainsIgnoreCase (String authorImage);
-    Comment findCommentByAuthorFirstNameContainsIgnoreCase (String authorFirstName);
+    Comment findCommentByAuthor(int author);
+
+  //  Comment findCommentByAuthorImageContainsIgnoreCase(String authorImage);
+
+   // Comment findCommentByAuthorFirstNameContainsIgnoreCase(String authorFirstName);
+
+    List<Comment> findAll();
+
+    void deleteById(Integer id);
+    Optional<Comment> findByIdAndAdId(Integer commentId, Integer adId);
 
 }

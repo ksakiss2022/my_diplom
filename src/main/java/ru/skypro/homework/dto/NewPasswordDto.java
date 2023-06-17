@@ -8,7 +8,10 @@ import lombok.Data;
  */
 @Data//// добавляет методы getter и setter для каждого поля класса, а также методы toString, equals и hashCode.
 public class NewPasswordDto {
-    private Integer id;
     private String currentPassword;//действующий пароль
     private String newPassword;
+
+    public CharSequence getPassword() {
+        return newPassword;
+    }
 }

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,15 +27,17 @@ import ru.skypro.homework.dto.UserDto;
  */
 @RestController//указывает, что это класс REST-контроллера
 @RequestMapping("/users")// устанавливает базовый URL-адрес для всех методов, которые обрабатываются этим контроллером.
+@RequiredArgsConstructor
 @CrossOrigin(value = "http://localhost:3000")//определяет адреса и порты, с которых будет доступен данный ресурс.
+
 public class UserController {
     private final UserService userService;// внедряется UserService, который содержит бизнес-логику, связанную с пользователями.
 
     private PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+   // public UserController(UserService userService) {
+     //   this.userService = userService;
+    //}
 
 
     //Аннотация @Operation содержит описание каждого метода, включая название,
@@ -129,8 +132,8 @@ public class UserController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
             }
     )
-    @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> updateUserImage(@RequestParam("image") MultipartFile image, Authentication authentication) {
+    @PostMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> updateUserImage(@RequestPart("image") MultipartFile image, Authentication authentication) {
         return ResponseEntity.status(200).build();
     }
 }

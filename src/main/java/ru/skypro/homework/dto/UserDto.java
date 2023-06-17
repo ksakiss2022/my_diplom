@@ -1,7 +1,9 @@
 package ru.skypro.homework.dto;
 
 import lombok.Data;
+import ru.skypro.homework.model.Image;
 
+import java.util.Objects;
 
 
 /**
@@ -15,17 +17,13 @@ import lombok.Data;
  * поскольку уменьшает количество запросов.
  */
 
-@Data//// добавляет методы getter и setter для каждого поля класса, а также методы toString, equals и hashCode.
+//@Data//// добавляет методы getter и setter для каждого поля класса, а также методы toString, equals и hashCode.
+@Data
 public class UserDto {
-
     private Integer id;
     private String email;
-
     private String firstName;
-
     private String lastName;
-
     private String phone;
-    private String image;
-
+    private Image avatar;
 }

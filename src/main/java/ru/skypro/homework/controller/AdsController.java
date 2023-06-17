@@ -10,12 +10,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.service.AdsService;
 
 import java.io.IOException;
+import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -75,7 +77,6 @@ public class AdsController {
     public ResponseEntity<AdsDto> addAd(@RequestPart("properties") AdsDto ads, @RequestParam MultipartFile image) throws IOException {
         return ResponseEntity.status(HttpStatus.CREATED).body(adsService.addAd(ads, image));
     }
-
     //операция "getAds" предназначена для получения информации об определенном объявлении. Для этого нужно передать ID
 // объявления в параметре URL. В ответ сервер возвращает объект AdsDto запрашиваемого объявления в формате JSON.
     @Operation(
@@ -91,10 +92,15 @@ public class AdsController {
                             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
             }, tags = "Объявления")
-    @GetMapping("/{id}")
-    public ResponseEntity<AdsDto> getAds(@Parameter(description = "Id объявления") @PathVariable Long id) {
-        return new ResponseEntity<>(HttpStatus.OK);
+ @GetMapping("/{id}")
+    public ResponseEntity<AdsDto> getAds(@Parameter(description = "Id объявления") @PathVariable Integer id) {
+        AdsDto adsDto = adsService.getAds(id);
+        return ResponseEntity.ok(adsDto);
     }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<AdsDto> getAds(@Parameter(description = "Id объявления") @PathVariable Long id) {
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
     //операция "removeAd" предназначена для удаления определенного объявления. Для этого нужно передать ID объявления
     // в параметре URL. В ответ сервер вернет статус 204 No Content в случае успешного удаления.
@@ -107,9 +113,14 @@ public class AdsController {
                     @ApiResponse(responseCode = "403", description = "Forbidden"),
             }, tags = "Объявления")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeAd(@Parameter(description = "Id объявления") @PathVariable Long id) {
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Void> removeAd(@Parameter(description = "Id объявления") @PathVariable Integer id) {
+        adsService.removeAd(id);
+        return ResponseEntity.noContent().build();
     }
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Void> removeAd(@Parameter(description = "Id объявления") @PathVariable Long id) {
+//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//    }
 
     // операция "updateAds" предназначена для обновления определенного объявления. Для этого нужно передать в теле
     // запроса объект Ads с обновленными полями и ID объявления в параметрах URL. В ответ сервер вернет объект
@@ -128,10 +139,12 @@ public class AdsController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             }, tags = "Объявления")
+
     @PatchMapping("/{id}")
-    public ResponseEntity<AdsDto> updateAds(@RequestBody AdsDto ads, @PathVariable Integer id) {
+    public ResponseEntity<String> updateAds(@RequestBody AdsDto ads, @PathVariable Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(adsService.updateAds(ads, id));
     }
+
 
     @Operation(
             operationId = "getAdsMe",
@@ -146,9 +159,15 @@ public class AdsController {
                             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
             }, tags = "Объявления")
+//    @GetMapping("/me")
+//    public ResponseEntity<AdsDto> getAdsMe() {
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
     @GetMapping("/me")
-    public ResponseEntity<AdsDto> getAdsMe() {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<List<AdsDto>> getAdsMe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        List<AdsDto> adsList = adsService.getAdsByUserId(Integer.valueOf(userPrincipal.getName()));
+        return ResponseEntity.status(HttpStatus.OK).body(adsList);
     }
 
     @Operation(
